@@ -23,7 +23,7 @@
 -- Consecutive available seats are more than 2(inclusive) seats consecutively available.
 
 -- Solution
-select seat_id, case
+select seat_id from (select seat_id, case
                     when (select free from cinema as c2
                           where c2.seat_id = c1.seat_id - 1) = 1
                           or (select free from cinema as c2
@@ -31,5 +31,7 @@ select seat_id, case
                       then "conse"
                     else "non-conse"
                     end as conse
-from cinema as c1
-where c1.free = 1
+                    from cinema as c1
+                    where c1.free = 1) as conse_seat
+where conse = "conse"
+                    
