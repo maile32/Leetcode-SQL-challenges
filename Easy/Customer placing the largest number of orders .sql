@@ -34,6 +34,11 @@
 -- So the result is customer_number '3'.
 
 -- Solution
+select customer_number
+from orders
+group by customer_number
+having count(order_number) = (select max(count_order)
+                             from (select count(order_number) as count_order
+                             from orders
+                             group by customer_number) as count_table)
 
-
--- Solution
