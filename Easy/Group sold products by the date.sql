@@ -46,5 +46,10 @@
 
 -- Solution
 
-
+select sell_date, count(product) as num_sold, group_concat(product
+                                                           order by product
+                                                           separator ",")
+from (select distinct *
+      from activities) as distinct_table
+group by sell_date
 
