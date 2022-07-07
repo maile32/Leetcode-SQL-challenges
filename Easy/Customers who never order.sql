@@ -33,7 +33,6 @@
 -- Solution
 select customers.name
 from customers
-left join
-orders
+left join orders
 on customers.id = orders.customerid
 where isnull(orders.id) = 1
