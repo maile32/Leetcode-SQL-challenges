@@ -57,13 +57,15 @@
 -- The comment with id 6 is a comment on a deleted post with id 7 so we ignored it.
 
 -- Solution
-select sub_id as post_id, 0 as number_of_comments
+--Step1: Select posts with no comments
+select distinct sub_id as post_id, 0 as number_of_comments
 from submissions
 where sub_id not in (select parent_id from submissions
                     where isnull(parent_id) = 0)
 and isnull(parent_id) = 1
 union
 
+--Step 2: Select posts with comments and is not deleted (i.e., still included in the sub_id)
 select parent_id as post_id, count(distinct sub_id) as number_of_comments
 from submissions
 where parent_id in (select sub_id from submissions)
