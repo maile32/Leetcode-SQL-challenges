@@ -99,13 +99,11 @@
 
 -- Solution
 select student_id, student_name, subject_name, coalesce(count_exam,0) as attended_exam
-from
-(select distinct student_id, student_name, subject_name, (select count(subject_name)
+from (select distinct student_id, student_name, subject_name, (select count(subject_name)
 							     from examinations
 							     group by student_id, subject_name
 							     having examinations.student_id = st.student_id
 							     and sj.subject_name = examinations.subject_name) as count_exam
-
-from (select student_id, student_name from students) as st
-cross join (select subject_name from examinations) as sj
-order by student_id) as count_table;
+      from (select student_id, student_name from students) as st
+      cross join (select subject_name from examinations) as sj
+      order by student_id) as count_table;
