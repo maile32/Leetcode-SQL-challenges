@@ -73,4 +73,4 @@ from (select company_id, employee_id, employee_name,salary, case when (select ma
                                                           having s1.company_id = s2.company_id) <= 10000 then 0.24
                                                     else 0.49
                                                     end as tax_rate
-from salaries as s1) as tax_table
+      from salaries as s1) as tax_table
