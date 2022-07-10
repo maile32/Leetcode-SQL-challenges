@@ -97,11 +97,11 @@
 -- Solution
 select distinct country_name
 from (select ct.name as country_name, avg(duration) over(partition by country_code) as country_avg
-from calls as c
-left join person as p
-on c.caller_id = p.id
-
-left join country as ct
-on left(p.phone_number,3) = ct.country_code) as avg_table
+      from calls as c
+      left join person as p
+      on c.caller_id = p.id
+      
+      left join country as ct
+      on left(p.phone_number,3) = ct.country_code) as avg_table
 where country_avg > (select avg(duration)
                      from calls);
