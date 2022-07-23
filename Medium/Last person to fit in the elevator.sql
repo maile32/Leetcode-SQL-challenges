@@ -49,4 +49,4 @@ where turn = (select max(turn)
              from queue as q1
              where (select sum(weight)
                     from queue as q2
-                    where q2.turn < q1.turn) < 1000)
+                    where q2.turn < q1.turn) <= 1000)
