@@ -82,11 +82,13 @@
 -- +-----------+------------+----------------+
 
 -- Solution
-select user_id as buyer_id, join_date, sum(2019_order)
+select user_id as buyer_id, join_date, sum(2019_order) as orders_in_2019
 from users
+
 left join
 (select *, case when year(order_date) = 2019
            then 1 else 0 end as 2019_order
 from orders) as year_table
 on users.user_id = year_table.buyer_id
+
 group by buyer_id
