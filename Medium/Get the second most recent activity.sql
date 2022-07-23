@@ -44,13 +44,7 @@
 
 -- Solution
 select username, activity, startdate, enddate
-from (select *, max(rnk) over(partition by username) as max_rnk
-      from (select *, rank() over(partition by username order by enddate desc) as rnk
-            from useractivity) as rank_table) as rank_table2
-where rnk = 1
-      and max_rnk = 1
-      
-union select username, activity, startdate, enddate
-      from (select *, rank() over(partition by username order by enddate desc) as rnk
-            from useractivity) as rank_table
-       where rnk = 2;
+from (select *, rank() over(partition by username order by enddate desc) as rnk,
+            count(activity) over(partition by username) as cnt
+      from useractivity) as rank_table
+where rnk = 2 or cnt = 1
