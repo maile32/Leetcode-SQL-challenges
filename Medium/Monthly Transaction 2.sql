@@ -62,25 +62,30 @@
 -- +----------+---------+----------------+-----------------+-------------------+--------------------+
 
 -- Solution
-select cb_month as month, table2.country, coalesce(approved_count,0) as approved_count, coalesce(approved_amount,0) as approved_amount, chargeback_count, chargeback_amount
-from
-(select app_month, country, sum(approved) as approved_count, sum(approved_amt) as approved_amount
-from (select *, date_format(trans_date,"%Y-%m") as app_month,
-      case when state = "approved" then 1 else 0 end as approved,
-      case when state = "approved" then amount else 0 end as approved_amt
-      from transactions) as t1
-group by app_month, country) as t2
+with t1 as
+(select country, date_format(trans_date, "%Y-%m") as month, state, count(id) as approved_count, sum(amount) as approved_amount
+from transactions
+where state = 'approved'
+group by country, date_format(trans_date, "%Y-%m")),
 
-right join
+t2 as(
+select t.country, date_format(c.trans_date, "%Y-%m") as month, sum(amount) as chargeback_amount, count(trans_id) as chargeback_count
+from chargebacks c left join transactions t 
+on trans_id = id
+group by t.country, date_format(c.trans_date, "%Y-%m")),
 
-(select *
-from (select country, date_format(c.trans_date,"%Y-%m") as cb_month, 
-        count(c.trans_id) over(partition by trans_id) as chargeback_count,
-        sum(amount) over(partition by trans_id) as chargeback_amount
-      from chargebacks as c
-      left join transactions as t
-      on c.trans_id = t.id) as table1
-group by cb_month, country) as table2
+t3 as(
+select t2.month, t2.country, coalesce(approved_count,0) as approved_count, coalesce(approved_amount,0) as approved_amount, coalesce(chargeback_count,0) as chargeback_count, coalesce(chargeback_amount,0) as chargeback_amount
+from t2 left join t1 
+on t2.month = t1.month and t2.country = t1.country),
 
-on t2. app_month = table2.cb_month
-and t2. country = table2.country
+t4 as(
+select t1.month, t1.country, coalesce(approved_count,0) as approved_count, coalesce(approved_amount,0) as approved_amount, coalesce(chargeback_count,0) as chargeback_count, coalesce(chargeback_amount,0) as chargeback_amount
+from t2 right join t1 
+on t2.month = t1.month and t2.country = t1.country)
+
+select *
+from t3
+union
+select *
+from t4
