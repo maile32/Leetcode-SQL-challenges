@@ -91,20 +91,20 @@
 -- Solution
 with t1 as
 (select name, rank()over(order by u1 desc, name) as ru1
-from (select name, count(mr.user_id) over(partition by mr.user_id) as u1
-from movie_rating as mr
-left join users
-on mr.user_id = users.user_id
-group by name) as t2),
+from (select name, count(mr.user_id) as u1
+      from movie_rating as mr
+      left join users
+      on mr.user_id = users.user_id
+      group by name) as t2),
 
 t3 as
 (select title, rank() over(order by m1 desc, title) as rm1
-from (select title, avg(rating) over(partition by mr.movie_id) as m1
-from movie_rating as mr
-left join movies
-on mr.movie_id = movies.movie_id
-where month(created_at) = 2
-group by title) as t4)
+from (select title, avg(rating) as m1
+      from movie_rating as mr
+      left join movies
+      on mr.movie_id = movies.movie_id
+      where month(created_at) = 2
+      group by title) as t4)
 
 
 select name from t1 where ru1 = 1
