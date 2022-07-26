@@ -54,9 +54,9 @@
 
 -- Solution
 select id, month, sum(salary) over(partition by id order by month) as cumu_sal
-from salary as s1
+from employee as e1
 where month != (select max(month) over(partition by id)
-                from salary as s2
-                where s1.id = s2.id
+                from employee as e2
+                where e1.id = e2.id
                 limit 1)
 order by id, month desc;
