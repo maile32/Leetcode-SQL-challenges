@@ -53,7 +53,7 @@
 -- | 3  | 2     | 40     |
 
 -- Solution
-select id, month, sum(salary) over(partition by id order by month) as cumu_sal
+select id, month, sum(salary) over(partition by id order by month rows between 2 preceding and current row) as cumu_sal
 from employee as e1
 where month != (select max(month) over(partition by id)
                 from employee as e2
