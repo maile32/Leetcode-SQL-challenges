@@ -78,11 +78,11 @@ with t1 as
 from (select *, min(score) over(partition by exam_id) as lowest,
              max(score) over(partition by exam_id) as highest
      from exam) as t2
-     where lowest = score or highest = score)
+where lowest = score or highest = score)
 
 select distinct student_id, student_name
 from exam
 join student
 using (student_id)
 where student_id != all(select student_id from t1)
-order by 1
+order by student_id
